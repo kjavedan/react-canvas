@@ -4,8 +4,11 @@ import { useEffect } from "react";
 import player from "../player.png";
 import boom from "../boom.png";
 import Button from "@mui/material/Button";
+import sound from "../sound.mp3";
 
 const Canvas = () => {
+  const audio = new Audio(sound);
+
   // Canvas dimension
   const CANVAS_WIDTH = 1200;
   const CANVAS_HIGHT = 700;
@@ -15,10 +18,12 @@ const Canvas = () => {
   const SHOOT_SPEED = 20;
 
   // spritesheet
-  const SPRITE_WIDTH = 185;
+  const SPRITE_WIDTH = 200;
   const SPRITE_HEIGHT = 200;
 
   const [spriteFrame, setSpriteFrame] = useState(0);
+
+  // console.log(spriteFrame);
 
   // explosions
   const explosion = [];
@@ -57,6 +62,8 @@ const Canvas = () => {
 
   const toggleStart = () => {
     setStartGame((PS) => !PS);
+    setIsCollied(false);
+    setSpriteFrame(0);
   };
 
   const handleShooting = () => {
@@ -82,24 +89,6 @@ const Canvas = () => {
 
   const drawExplosion = (canvas) => {
     console.log("jo");
-
-    const ctx = canvas.getContext("2d");
-    const boomImg = boomRef.current;
-
-    console.log(boomImg);
-    console.log(ctx);
-    console.log(canvas);
-    ctx.drawImage(
-      boomImg,
-      SPRITE_HEIGHT * spriteFrame,
-      0,
-      SPRITE_WIDTH,
-      SPRITE_HEIGHT,
-      550,
-      0,
-      EXPLOSION_WIDTH,
-      EXPLOSION_HEIGHT
-    );
   };
 
   useEffect(() => {
@@ -112,8 +101,6 @@ const Canvas = () => {
     const ctx = canvas.getContext("2d");
 
     if (!isCollied) {
-      ctx.fillStyle = "lightblue";
-      ctx.fillRect(foxX, foxY, FOX_WIDTH, FOX_HEIGHT);
       ctx.drawImage(
         foxImg,
         foxY,
@@ -125,8 +112,6 @@ const Canvas = () => {
         100,
         91.3
       );
-      ctx.fillStyle = "lightblue";
-      ctx.fillRect(550, weaponY, WEAPON_WIDTH, WEAPON_HEIGHT);
       ctx.drawImage(
         weaponImg,
         0,
@@ -168,8 +153,6 @@ const Canvas = () => {
   }, [foxX]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-
     let weaponId;
     if (startGame && startShooting) {
       if (weaponY > SCREEN_TOP) {
@@ -186,13 +169,43 @@ const Canvas = () => {
       if (weaponY <= SCREEN_TOP) {
         console.log("gg");
         setIsCollied(true);
-        drawExplosion(canvas);
       }
     }
     return () => {
       clearInterval(weaponId);
     };
   }, [foxX, weaponY, startShooting, startGame]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const boomImg = boomRef.current;
+    let spriteId;
+    if (isCollied) {
+      audio.play();
+
+      if (spriteFrame < 6) {
+        spriteId = setInterval(() => {
+          setSpriteFrame((PS) => PS + 1);
+          console.log(spriteFrame);
+        }, 50);
+        ctx.drawImage(
+          boomImg,
+          SPRITE_WIDTH * spriteFrame,
+          0,
+          SPRITE_WIDTH,
+          SPRITE_HEIGHT,
+          550,
+          0,
+          EXPLOSION_WIDTH,
+          EXPLOSION_HEIGHT
+        );
+      }
+    }
+    return () => {
+      clearInterval(spriteId);
+    };
+  }, [spriteFrame, isCollied]);
 
   return (
     <>
