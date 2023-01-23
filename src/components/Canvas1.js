@@ -6,7 +6,7 @@ import boom from "../boom.png";
 import Button from "@mui/material/Button";
 import sound from "../sound.mp3";
 
-const Canvas = () => {
+const Canvas1 = () => {
   const audio = new Audio(sound);
 
   // Canvas dimension
@@ -182,7 +182,7 @@ const Canvas = () => {
     const boomImg = boomRef.current;
     let spriteId;
     if (isCollied) {
-      audio.play();
+      // audio.play();
 
       if (spriteFrame < 6) {
         spriteId = setInterval(() => {
@@ -223,7 +223,7 @@ const Canvas = () => {
   );
 };
 
-export default Canvas;
+export default Canvas1;
 
 const StyledCanvas = styled.canvas`
   background-color: peachpuff;
