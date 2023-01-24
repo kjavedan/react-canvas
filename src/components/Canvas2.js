@@ -16,7 +16,7 @@ const Canvas2 = () => {
   const CANVAS_WIDTH = 1200;
   const CANVAS_HEIGHT = 500;
 
-  let gameSpeed = 3;
+  let gameSpeed = 5;
   let gameFrame = 0;
 
   const canvasRef = useRef(null);
@@ -32,28 +32,17 @@ const Canvas2 = () => {
   const [layer4Img, setLayer4Img] = useState();
   const [layer5Img, setLayer5Img] = useState();
 
-  console.log(layer1Img);
-
   let x = 0;
   let x2 = 1667;
   const animate = () => {
     if (ctx) {
       ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-      ctx.drawImage(layer1Img, x, 0);
-      ctx.drawImage(layer1Img, x2, 0);
-
-      ctx.drawImage(layer2Img, x, 0);
-      ctx.drawImage(layer2Img, x2, 0);
-
-      ctx.drawImage(layer3Img, x, 0);
-      ctx.drawImage(layer3Img, x2, 0);
-
-      ctx.drawImage(layer4Img, x, 0);
-      ctx.drawImage(layer4Img, x2, 0);
-
-      ctx.drawImage(layer5Img, x, 0);
-      ctx.drawImage(layer5Img, x2, 0);
+      drawBackground(ctx, layer1Img);
+      drawBackground(ctx, layer2Img);
+      drawBackground(ctx, layer3Img);
+      drawBackground(ctx, layer4Img);
+      drawBackground(ctx, layer5Img);
 
       if (x < -1667) x = 1667 + x2 - gameSpeed;
       else x -= gameSpeed;
@@ -64,24 +53,26 @@ const Canvas2 = () => {
     }
   };
 
+  const drawBackground = (ctx, img) => {
+    ctx.drawImage(img, x, 0);
+    ctx.drawImage(img, x2, 0);
+  };
+
   useEffect(() => {
     canvas = canvasRef.current;
     const context = canvas.getContext("2d");
     setCtx(context);
     canvas.width = CANVAS_WIDTH;
     canvas.height = CANVAS_HEIGHT;
+
     setLayer1Img(layer1Ref.current);
     setLayer2Img(layer2Ref.current);
     setLayer3Img(layer3Ref.current);
     setLayer4Img(layer4Ref.current);
     setLayer5Img(layer5Ref.current);
-  }, []);
 
-  useEffect(() => {
     animate();
-  }, [ctx]);
-
-  console.log(ctx);
+  }, [ctx, layer5Ref]);
 
   return (
     <StyledContainer>
